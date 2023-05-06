@@ -6,6 +6,6 @@ dist
 __pycache__
 
 # docs
-docs/_build/*
+docs/_build
 docs/*.rst
 !docs/index.rst

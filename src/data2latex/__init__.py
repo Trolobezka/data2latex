@@ -1,1 +1,1 @@
-from .documentmanager import *
+from .dm import *

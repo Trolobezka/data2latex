@@ -3,33 +3,42 @@ from shutil import rmtree
 from typing import List
 
 if __name__ == "__main__":
-    paths: List[str] = []
+    found_paths: List[Path] = []
+    search_patterns: List[str] = [
+        "dist",
+        "build",
+        "*/*.egg-info",
+        "__pycache__",
+        "src/**/__pycache__",
+        "tests/**/__pycache__",
+        "docs/**/__pycache__",
+        "docs/_build",
+        "docs/[!i]*.rst",
+    ]
+    root = Path(".")
 
-    if Path("dist").exists():
-        paths.append("dist")
-    if Path("build").exists():
-        paths.append("build")
-    for p in Path(".").glob("*/*.egg-info"):
-        paths.append(str(p))
-    for p in Path(".").glob("*/__pycache__"):
-        paths.append(str(p))
+    for search_path in search_patterns:
+        found_paths.extend(list(root.glob(search_path)))
 
-    if len(paths) == 0:
+    if len(found_paths) == 0:
         print("Already clear\n")
         exit()
 
     print("Found paths:\n")
-    for p in paths:
+    for p in found_paths:
         print(p)
 
     answer = input("\nRemove (y/n)? ")
     print()
 
     if answer.strip().lower() == "y":
-        for p in paths:
+        for p in found_paths:
             try:
-                rmtree(p)
+                if p.is_file():
+                    p.unlink()
+                else:
+                    rmtree(p)
                 print(f"Removed: {p}")
             except:
                 print(f"ERROR: {p}")
-    print()
+        print()

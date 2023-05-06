@@ -30,7 +30,7 @@ python -m pip install .[dev]
 ## Generating documentation
 
 ```bash
-sphinx-apidoc -o docs src
+sphinx-apidoc -o docs src/data2latex
 ./docs/make html
 ```
 

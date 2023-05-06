@@ -11,7 +11,8 @@ class DocumentManager:
     """
     Document Manager is a singleton class for storing information about current LaTeX document.
 
-    :raises NotImplementedError: Singleton class cannot be instantiated with DocumentManager()
+    :raises NotImplementedError: DocumentManager is singleton class and cannot be instantiated.
+        Use DocumentManager.gdm() to get the instance.
     """
 
     _instance: Optional["DocumentManager"] = None
