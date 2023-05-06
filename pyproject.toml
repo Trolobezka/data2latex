@@ -1,0 +1,59 @@
+[project]
+name = "data2latex"
+version = "0.0.1"
+authors = [
+  { name="Richard Kokštein", email="richard.Kokstein@fs.cvut.cz" },
+]
+description = "Prototype for simple generation of LaTeX tables and plots from scientific data for use in papers."
+keywords = ["generation", "latex", "table", "plot", "graph", "array", "datatable"]
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Intended Audience :: Science/Research",
+    "Topic :: Utilities",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+  "pylatex >= 1.4.1",
+  "matplotlib >= 3.7.1",
+  "numpy >= 1.24.3",
+  "pandas >= 2.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "black >= 22.10.0",
+  "sphinx >= 7.0.0",
+  "pytest >= 7.3.1",
+]
+
+[project.urls]
+homepage = "https://github.com/Trolobezka/data2latex"
+documentation = "https://github.com/Trolobezka/data2latex"
+repository = "https://github.com/Trolobezka/data2latex"
+"Bug Tracker" = "https://github.com/Trolobezka/data2latex/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+# include = ["data2latex*"]
+# exclude = [
+#   "*.docs", "*.docs.*", "docs.*", "docs",
+#   "*.tests", "*.tests.*", "tests.*", "tests",
+# ]
+
+[tool.setuptools.package-data]
+"*" = ["*.*"]
