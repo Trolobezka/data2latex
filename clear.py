@@ -14,6 +14,13 @@ if __name__ == "__main__":
         "docs/**/__pycache__",
         "docs/_build",
         "docs/[!i]*.rst",
+        "tests/**/*.aux",
+        "tests/**/*.fdb_latexmk",
+        "tests/**/*.fls",
+        "tests/**/*.log",
+        "tests/**/*.synctex.gz",
+        "tests/**/*.tex",
+        "tests/**/*.pdf",
     ]
     root = Path(".")
 
