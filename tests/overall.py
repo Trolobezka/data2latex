@@ -1,29 +1,28 @@
 from typing import (
     Any,
     Dict,
+    Generator,
+    Generic,
+    Iterator,
     List,
     Literal,
     Optional,
-    TypeAlias,
-    Union,
-    Tuple,
     Protocol,
-    runtime_checkable,
-    Generator,
-    Iterator,
-    Generic,
+    Tuple,
+    TypeAlias,
     TypeVar,
+    Union,
+    runtime_checkable,
 )
 
 import numpy as np
-import pylatex as tex
 import pandas as pd
+import pylatex as tex  # pyright: ignore [reportMissingTypeStubs]
 
-import data2latex as d2l
-from data2latex.iter_protocols import *
+import data2latex as dtol
 
-d2l.section("Testing Area")
-d2l.text(
+dtol.section("Testing Area")
+dtol.text(
     "Fusce ex sem, lacinia eget eros ac, semper blandit leo. Fusce vel aliquam magna. Nulla facilisi. Donec vel sapien rhoncus eros accumsan congue consectetur ut arcu. Nullam tincidunt lectus a leo rutrum, sed posuere turpis aliquet. Aenean vel aliquet arcu. Etiam vulputate, eros et euismod ultrices, ante sapien semper tellus, ac aliquet turpis leo et tortor. Sed et ex id velit bibendum ultrices. Aliquam erat volutpat."
 )
 
@@ -36,41 +35,23 @@ data = np.concatenate(
 )
 
 header = ["Cat", "Dog", "Rabbit"]
-animals = pd.DataFrame([[True, 2, 3], [3, "a", 2], [0, 1, 11.256]], header, header)
-animals = pd.DataFrame(
-    [["1", "2", "3"], ["Ahoooooj", "a", "HEEEELLoooo"], [True, 1, 11.256]],
-    header,
-    header,
-)
+dataframe = pd.DataFrame([[True, 0, 0], [0, "a", 0], [0, 0, 11.256]], header, header)
 
-d2l.table(
-    animals.__array__().tolist(),
-    caption="Some animals",
-    DF_row_names=False,
-    line_style="header",
-    header_col_align="l",
-    col_align="r",
-    header_dir="top",
-    str_try_number=False,
-)
+dtol.table(data, caption="Data from numpy.ndarray", rules="#", top_head_bold=True)
 
-d2l.table(
-    data,
-    caption="Table with no settings",
-)
-d2l.table(
-    data,
-    caption="Decent table",
-    escape_caption=False,
-    line_style="header",
-    header_dir="top",
-    header_col_align="l",
+dtol.table(
+    dataframe,
+    caption="Data from pandas.DataFrame",
+    rules="|2_2",
+    top_head_bold=True,
+    top_head_col_align="l",
+    left_head_bold=True,
+    left_head_col_align="r",
     col_align="r",
-    use_siunitx=True,
 )
 
 try:
-    d2l.pdf()
+    dtol.pdf("overall")
 except:
     print("COMPILATION ERROR")
-d2l.latex()
+dtol.latex()
