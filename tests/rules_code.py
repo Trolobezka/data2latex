@@ -1,5 +1,5 @@
 import pandas as pd
-import pylatex as tex
+import pylatex as tex  # pyright: ignore [reportMissingTypeStubs]
 
 import data2latex as dtol
 
@@ -19,7 +19,9 @@ for rules in [
     "_13|1",
     "|2_2",
 ]:
-    cap = tex.utils.escape_latex(f"rules={rules}")
+    cap = tex.utils.escape_latex(  # pyright: ignore [reportUnknownMemberType]
+        f"rules={rules}"
+    )
     dtol.table(
         animals,
         rules=rules,
