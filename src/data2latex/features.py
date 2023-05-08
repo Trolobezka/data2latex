@@ -52,6 +52,7 @@ def table(
         NDArrayLike,
     ],
     caption: Optional[str] = None,
+    caption_pos: Literal["above", "bellow"] = "above",
     label: Optional[str] = None,
     center: bool = True,
     float_format: str = "{:0.3f}",
@@ -177,7 +178,6 @@ def table(
         if use_siunitx:
             column_type["si"]["table-format"] = f"{max_pre_i}.{max_post_i}"
         colspec[i] = f"Q[{dict2str(column_type)}]"
-        print(colspec[i])
 
     #
     # Columns and rows configuration (rules/lines)
@@ -244,12 +244,13 @@ def table(
         table.append(  # pyright: ignore [reportUnknownMemberType]
             SetLengthCommand("belowcaptionskip", "5pt plus 2pt minus 2pt")
         )
-        if escape_caption:
-            table.add_caption(caption)  # pyright: ignore [reportUnknownMemberType]
-        else:
-            table.add_caption(  # pyright: ignore [reportUnknownMemberType]
-                NoEscape(caption)
-            )
+        if caption_pos == "above":
+            if escape_caption:
+                table.add_caption(caption)  # pyright: ignore [reportUnknownMemberType]
+            else:
+                table.add_caption(  # pyright: ignore [reportUnknownMemberType]
+                    NoEscape(caption)
+                )
 
     tabular = tblr(
         "".join(colspec),
@@ -263,6 +264,14 @@ def table(
         table.append(adjustbox)  # pyright: ignore [reportUnknownMemberType]
     else:
         table.append(tabular)  # pyright: ignore [reportUnknownMemberType]
+
+    if caption is not None and caption_pos == "bellow":
+        if escape_caption:
+            table.add_caption(caption)  # pyright: ignore [reportUnknownMemberType]
+        else:
+            table.add_caption(  # pyright: ignore [reportUnknownMemberType]
+                NoEscape(caption)
+            )
 
     if label is not None:
         table.append(  # pyright: ignore [reportUnknownMemberType]
