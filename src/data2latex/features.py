@@ -112,23 +112,25 @@ def table(
     rules: str = "",
     caption: Optional[str] = None,
     caption_pos: Literal["above", "bellow"] = "above",
+    escape_caption: bool = True,
     label: Optional[str] = None,
+    position: str = "h!",
     center: bool = True,
     float_format: str = "{:0.3f}",
-    str_format: str = "{{{{{{{:s}}}}}}}",
+    str_format: str = "{{{{{{{:s}}}}}}}",  # siunitx wants text enclosed in {{{...}}}
     str_convertor: Callable[[Any], str] = str,
     str_try_number: bool = True,
-    header_dir: Optional[Literal["top", "left"]] = None,
-    header_col_align: Optional[Literal["l", "c", "r", "j"]] = None,
+    escape_cells: bool = True,
     col_align: Literal["l", "c", "r", "j"] = "c",
     row_align: Literal["t", "m", "b", "h", "f"] = "m",
-    position: str = "h!",
-    escape_cells: bool = True,
-    escape_caption: bool = True,
+    left_head_bold: bool = False,
+    left_head_col_align: Optional[Literal["l", "c", "r", "j"]] = None,
+    top_head_bold: bool = False,
+    top_head_col_align: Optional[Literal["l", "c", "r", "j"]] = None,
     use_adjustbox: bool = True,
     use_siunitx: bool = True,
-    DF_column_names: bool = True,
-    DF_row_names: bool = True,
+    dataframe_column_names: bool = True,
+    dataframe_row_names: bool = True,
 ) -> None:
     """
     Generate LaTeX table from input data. Table is created with tabularray package
@@ -142,7 +144,9 @@ def table(
         pass
     elif "DataFrame" in str(type(data)) and isinstance(data, DataFrameLike):
         data = DataFrameIterator(
-            data, include_column_names=DF_column_names, include_row_names=DF_row_names
+            data,
+            include_column_names=dataframe_column_names,
+            include_row_names=dataframe_row_names,
         )
     elif "ndarray" in str(type(data)) and isinstance(data, NDArrayLike):
         if data.ndim == 1:
@@ -278,22 +282,18 @@ def table(
     # Columns and rows configuration (header)
     #
     additional_tblr_parameters = {}
-    if header_dir == "top":
-        if header_col_align is None:
-            additional_tblr_parameters["row{1}"] = Parameters2({"font": r"\bfseries"})
-        else:
-            additional_tblr_parameters["row{1}"] = Parameters2(
-                {"font": r"\bfseries", "halign": header_col_align}
-            )
-    elif header_dir == "left":
-        if header_col_align is None:
-            additional_tblr_parameters["column{1}"] = Parameters2(
-                {"font": r"\bfseries"}
-            )
-        else:
-            additional_tblr_parameters["column{1}"] = Parameters2(
-                {"font": r"\bfseries", "halign": header_col_align}
-            )
+    first_row_params: Dict[str, str] = {}
+    if top_head_bold:
+        first_row_params["font"] = r"\bfseries"
+    if top_head_col_align is not None:
+        first_row_params["halign"] = top_head_col_align
+    additional_tblr_parameters["row{1}"] = Parameters2(first_row_params)
+    first_col_params: Dict[str, str] = {}
+    if left_head_bold:
+        first_col_params["font"] = r"\bfseries"
+    if left_head_col_align is not None:
+        first_col_params["halign"] = left_head_col_align
+    additional_tblr_parameters["column{1}"] = Parameters2(first_col_params)
 
     #
     # LaTeX environments completion
