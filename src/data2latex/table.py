@@ -118,9 +118,126 @@ def table(
     dataframe_row_names: bool = True,
 ) -> None:
     """
-    Generate LaTeX table from input data. Table is created with tabularray package
-    with optional siunitx usage for decimal number alignment. Table can be automatically
-    scaled down with adjustbox package.
+    Generate LaTeX table from input data. Table is created with ``tabularray`` package (``tblr`` environment) with optional ``siunitx`` usage for decimal number alignment. Table can be automatically scaled down with ``adjustbox`` package.
+
+    **Examples of usage**
+
+    .. highlight:: python
+    .. code-block:: python
+
+        import data2latex as dtol
+        data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        dtol.table(data)
+        dtol.finish()
+
+    .. highlight:: python
+    .. code-block:: python
+
+        import data2latex as dtol
+        data = pd.DataFrame(
+            [["purple", "cyan"], ["blue", "yellow"]],
+            ["C1", "C2"], ["R1", "R2"]
+        )
+        dtol.table(
+            data,
+            caption="Data from pandas.DataFrame",
+            rules="|2_2",
+            top_head_bold=True,
+            left_head_bold=True,
+        )
+        dtol.finish()
+
+    :param data: 2D structure holding your data. Supported data types are ``List[List[Any]]``, ``numpy.ndarray{ndim >= 2}`` and ``pandas.DataFrame``.
+    :type data: Union[Sequence2D, KnownLengthIterable2D, DataFrameIterator, DataFrameLike, NDArrayLike]
+
+    :param rules: Rule settings using custom syntax, defaults to ``""``.
+
+        ======  ======
+        Symbol  Meaning
+        ======  ======
+        ``|``   Select the vertical rules.
+        ``_``   Select the horizontal rules.
+        ``1``   Apply rule before header in selected direction.
+        ``2``   Apply rule after header in selected direction.
+        ``3``   Apply rule after table body in selected direction.
+        ``A``   Apply every rule in selected direction.
+        ``a``   Apply every rule in selected direction except the border ones.
+        ``B``   Apply every rule in table body in selected direction.
+        ``b``   Apply every rule in table body in selected direction except the border ones.
+        ``#``   Apply every rule in both direction, every cell has full border.
+        ``O``   Apply every rule around table.
+        ``o``   Apply every rule around table body.
+        ======  ======
+
+        Symbols ``#``, ``O``, ``o`` don't need selected direction.
+
+    :type rules: str, optional
+
+    :param caption: Caption text, defaults to ``None``.
+    :type caption: Optional[str], optional
+
+    :param caption_pos: Position caption above or bellow the table, defaults to ``"above"``.
+    :type caption_pos: Literal["above", "bellow"], optional
+
+    :param escape_caption: ``True`` for escaping special LaTeX symbols in caption text, defaults to ``True``.
+    :type escape_caption: bool, optional
+
+    :param label: Label for later referencing, use format ``"prefix:label"`` or just ``"label"`` with automatic prefix ``"table"``, defaults to ``None``.
+    :type label: Optional[str], optional
+
+    :param position: Float position on the page for ``table`` environment, defaults to ``"h!"``.
+    :type position: str, optional
+
+    :param center: ``True`` for centering the table on the page, defaults to ``True``.
+    :type center: bool, optional
+
+    :param float_format: Format for formatting ``float`` numbers with :func:`str.format`. Here you can change the number of printed decimal places, ``int`` numbers are printed without any format, defaults to ``"{:0.3f}"``.
+    :type float_format: str, optional
+
+    :param str_format: Format for formatting strings with :func:`str.format`. Text must be enclosed in triple curly brackets if you use the ``siunitx`` package, defaults to ``"{{{{{{{:s}}}}}}}"``.
+    :type str_format: str, optional
+
+    :param str_convertor: Function for converting objects into strings, defaults to ``str``.
+    :type str_convertor: Callable[[Any], str]
+
+    :param str_try_number: ``True`` for trying to convert ``str`` to ``int`` and ``float``. This process is done after formatting numbers and converting objects into strings. Turn this off if you do not need it. Defaults to ``True``.
+    :type str_try_number: bool, optional
+
+    :param escape_cells: ``True`` for escaping every cells content, defaults to ``True``.
+    :type escape_cells: bool, optional
+
+    :param col_align: Classic column (horizontal) contenet alignment setting, defaults to ``"c"``.
+    :type col_align: Literal["l", "c", "r", "j"], optional
+
+    :param row_align: Classis row (vertical) content alignment setting, defaults to ``"m"``.
+    :type row_align: Literal["t", "m", "b", "h", "f"], optional
+
+    :param left_head_bold: ``True`` for bold left header text, defaults to ``False``.
+    :type left_head_bold: bool, optional
+
+    :param left_head_col_align: Left header text vertical alignment setting, defaults to ``None``.
+    :type left_head_col_align: Optional[Literal["l", "c", "r", "j"]], optional
+
+    :param top_head_bold: ``True`` for bold top header text, defaults to ``False``.
+    :type top_head_bold: bool, optional
+
+    :param top_head_col_align: Top header text vertical alignment setting, defaults to ``None``.
+    :type top_head_col_align: Optional[Literal["l", "c", "r", "j"]], optional
+
+    :param use_adjustbox: ``True`` for wrapping the whole ``tblr`` environment in ``adjustbox`` macro, which will shrink the table if it is wider then ``linewidth``, defaults to ``True``.
+    :type use_adjustbox: bool, optional
+
+    :param use_siunitx: ``True`` for using ``siunitx`` package for aligning numbers. To allow custom vertical alignment, we must know max number of digits each column will store. There is currently implemented some sort of heuristic approach for obtaining this information. Turn this off if you do not need it. It does not work with numbers in scientific notation. Defaults to ``True``.
+    :type use_siunitx: bool, optional
+
+    :param dataframe_column_names: ``True`` for showing column names if the input data is ``pandas.DataFrame``, defaults to ``True``.
+    :type dataframe_column_names: bool, optional
+
+    :param dataframe_row_names: ``True`` for showing row names if the input data is ``pandas.DataFrame``, defaults to ``True``.
+    :type dataframe_row_names: bool, optional
+
+    :raises ValueError: Input data must have at least two dimensions.
+    :raises ValueError: Unknown input data type. Supporting ``List[List[Any]]``, ``numpy.ndarray{ndim >= 2}`` and ``pandas.DataFrame``.
     """
     #
     # Handle different types of input data
@@ -134,7 +251,7 @@ def table(
             include_row_names=dataframe_row_names,
         )
     elif "ndarray" in str(type(data)) and isinstance(data, NDArrayLike):
-        if data.ndim == 1:
+        if data.ndim <= 1:
             raise ValueError("Input data must have at least two dimensions.")
     elif isinstance(data, OuterKnownLengthIterable) and all(
         [isinstance(x, KnownLengthIterable) for x in data]
