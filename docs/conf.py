@@ -8,27 +8,31 @@
 
 import os
 import sys
+from typing import Any
 
 # https://www.youtube.com/watch?v=BWIrhgCAae0
-sys.path.insert(0, os.path.abspath('../src'))
+sys.path.insert(0, os.path.abspath("../src"))
 
-project = 'data2latex'
-copyright = '2023, Richard Kokštein'
-author = 'Richard Kokštein'
-release = '0.0.1'
+project = "data2latex"
+copyright = "2023, Richard Kokštein"
+author = "Richard Kokštein"
+release = "0.0.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc']
+extensions = ["sphinx.ext.autodoc"]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'classic'
-html_static_path = ['_static']
+html_theme = "classic"
+html_static_path = ["_static"]
+
+
+def setup(app: Any) -> None:
+    app.add_css_file("css/custom.css")
