@@ -1,5 +1,5 @@
 from numbers import Integral, Number
-from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast, Set
 
 from pylatex import Table, Section  # pyright: ignore [reportMissingTypeStubs]
 from pylatex.utils import (  # pyright: ignore [reportMissingTypeStubs]
@@ -43,6 +43,64 @@ def section(title: str, numbering: bool = False, label: Optional[str] = None) ->
     )
 
 
+class Rule:
+    INNER_BODY = 0
+    BEFORE_HEADER = 1
+    AFTER_HEADER = 2
+    AFTER_BODY = 3
+    COL = "v"
+    ROW = "h"
+    ALLOWED: Set[int] = {0, 1, 2, 3}
+
+
+def set_add(s: Optional[Set[int]], num: Union[int, List[int]], i: int) -> None:
+    if not isinstance(num, list):
+        num = [num]
+    if s is None:
+        raise ValueError(f"Number with no direction specifier found at index {i}.")
+    elif len(set(num).difference(Rule.ALLOWED)) != 0:
+        raise ValueError(f"Invalid number found at index {i}.")
+    else:
+        s.update(num)
+
+
+def decode_line_style_code(code: str) -> Dict[Literal["v", "h"], Set[int]]:
+    v: Set[int] = set()
+    h: Set[int] = set()
+    last_seen: Optional[Set[int]] = None
+    code = code.replace("V", "v").replace("H", "h")
+    for i, letter in enumerate(code):
+        if letter == "|" or letter == "v":
+            last_seen = v
+        elif letter == "_" or letter == "h":
+            last_seen = h
+        elif letter == "#":
+            set_add(v, [0, 1, 2, 3], i)
+            set_add(h, [0, 1, 2, 3], i)
+        elif letter == "O":
+            set_add(v, [1, 3], i)
+            set_add(h, [1, 3], i)
+        elif letter == "o":
+            set_add(v, [2, 3], i)
+            set_add(h, [2, 3], i)
+        elif letter == "A":
+            set_add(last_seen, [0, 1, 2, 3], i)
+        elif letter == "a":
+            set_add(last_seen, [0, 2], i)
+        elif letter == "B":
+            set_add(last_seen, [0, 2, 3], i)
+        elif letter == "b":
+            set_add(last_seen, [0], i)
+        else:
+            num: int = -1
+            try:
+                num = int(letter)
+            except ValueError:
+                pass
+            set_add(last_seen, num, i)
+    return {"v": v, "h": h}
+
+
 def table(
     data: Union[
         Sequence2D,
@@ -51,6 +109,7 @@ def table(
         DataFrameLike,
         NDArrayLike,
     ],
+    rules: str = "",
     caption: Optional[str] = None,
     caption_pos: Literal["above", "bellow"] = "above",
     label: Optional[str] = None,
@@ -59,9 +118,6 @@ def table(
     str_format: str = "{{{{{{{:s}}}}}}}",
     str_convertor: Callable[[Any], str] = str,
     str_try_number: bool = True,
-    line_style: Optional[
-        Literal["border", "all", "header", "#", "O", "|h|", "h|", "|h|...|", "h|...|"]
-    ] = "all",
     header_dir: Optional[Literal["top", "left"]] = None,
     header_col_align: Optional[Literal["l", "c", "r", "j"]] = None,
     col_align: Literal["l", "c", "r", "j"] = "c",
@@ -184,31 +240,39 @@ def table(
     #
     # Columns and rows configuration (rules/lines)
     #
-    if line_style == "border" or line_style == "O":
-        colspec = ["|", "".join(colspec), "|"]
-        rowspec = ["|", "".join(rowspec), "|"]
-    elif line_style == "all" or line_style == "#":
-        colspec = ["|", "|".join(colspec), "|"]
-        rowspec = ["|", "|".join(rowspec), "|"]
-    elif line_style in ["header", "|h|", "h|", "|h|...|", "h|...|"]:
-        if line_style == "header":
-            line_style = "|h|"
-        if header_dir == None or header_dir == "top":
-            rowspec = [
-                "|" if "|h" in line_style else "",
-                rowspec[0],
-                "|" if "h|" in line_style else "",
-                "".join(rowspec[1:] if len(rowspec) > 1 else []),
-                "|" if "|...|" in line_style else "",
-            ]
-        elif header_dir == "left":
-            colspec = [
-                "|" if "|h" in line_style else "",
-                colspec[0],
-                "|" if "h|" in line_style else "",
-                "".join(colspec[1:] if len(colspec) > 1 else []),
-                "|" if "|...|" in line_style else "",
-            ]
+    RULES = decode_line_style_code(rules)
+    colspec_header: str = ""
+    colspec_body: List[str] = []
+    if len(colspec) == 0:
+        pass  # Maybe error?
+    elif len(colspec) == 1:
+        colspec_header = colspec[0]
+    else:
+        colspec_header = colspec[0]
+        colspec_body = colspec[1:]
+    colspec = [
+        "|" if Rule.BEFORE_HEADER in RULES[Rule.COL] else "",
+        colspec_header,
+        "|" if Rule.AFTER_HEADER in RULES[Rule.COL] else "",
+        ("|" if Rule.INNER_BODY in RULES[Rule.COL] else "").join(colspec_body),
+        "|" if Rule.AFTER_BODY in RULES[Rule.COL] and len(colspec_body) > 0 else "",
+    ]
+    rowspec_header: str = ""
+    rowspec_body: List[str] = []
+    if len(rowspec) == 0:
+        pass  # Maybe error?
+    elif len(rowspec) == 1:
+        rowspec_header = rowspec[0]
+    else:
+        rowspec_header = rowspec[0]
+        rowspec_body = rowspec[1:]
+    rowspec = [
+        "|" if Rule.BEFORE_HEADER in RULES[Rule.ROW] else "",
+        rowspec_header,
+        "|" if Rule.AFTER_HEADER in RULES[Rule.ROW] else "",
+        ("|" if Rule.INNER_BODY in RULES[Rule.ROW] else "").join(rowspec_body),
+        "|" if Rule.AFTER_BODY in RULES[Rule.ROW] and len(rowspec_body) > 0 else "",
+    ]
 
     #
     # Columns and rows configuration (header)
