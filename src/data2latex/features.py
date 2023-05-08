@@ -59,7 +59,9 @@ def table(
     str_format: str = "{{{{{{{:s}}}}}}}",
     str_convertor: Callable[[Any], str] = str,
     str_try_number: bool = True,
-    line_style: Optional[Literal["border", "all", "header"]] = "all",
+    line_style: Optional[
+        Literal["border", "all", "header", "#", "O", "|h|", "h|", "|h|...|", "h|...|"]
+    ] = "all",
     header_dir: Optional[Literal["top", "left"]] = None,
     header_col_align: Optional[Literal["l", "c", "r", "j"]] = None,
     col_align: Literal["l", "c", "r", "j"] = "c",
@@ -182,26 +184,30 @@ def table(
     #
     # Columns and rows configuration (rules/lines)
     #
-    if line_style == "border":
+    if line_style == "border" or line_style == "O":
         colspec = ["|", "".join(colspec), "|"]
         rowspec = ["|", "".join(rowspec), "|"]
-    elif line_style == "all":
+    elif line_style == "all" or line_style == "#":
         colspec = ["|", "|".join(colspec), "|"]
         rowspec = ["|", "|".join(rowspec), "|"]
-    elif line_style == "header":
+    elif line_style in ["header", "|h|", "h|", "|h|...|", "h|...|"]:
+        if line_style == "header":
+            line_style = "|h|"
         if header_dir == None or header_dir == "top":
             rowspec = [
-                "|",
+                "|" if "|h" in line_style else "",
                 rowspec[0],
-                "|",
+                "|" if "h|" in line_style else "",
                 "".join(rowspec[1:] if len(rowspec) > 1 else []),
+                "|" if "|...|" in line_style else "",
             ]
         elif header_dir == "left":
             colspec = [
-                "|",
+                "|" if "|h" in line_style else "",
                 colspec[0],
-                "|",
+                "|" if "h|" in line_style else "",
                 "".join(colspec[1:] if len(colspec) > 1 else []),
+                "|" if "|...|" in line_style else "",
             ]
 
     #
@@ -253,8 +259,8 @@ def table(
                 )
 
     tabular = tblr(
-        "".join(colspec),
-        "".join(rowspec),
+        colspec="".join(colspec),
+        rowspec="".join(rowspec),
         data=NoEscape(latex_data),
         arguments=additional_tblr_parameters,
     )
