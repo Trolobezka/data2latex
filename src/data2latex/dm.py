@@ -1,12 +1,9 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
-# import matplotlib as mpl
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import pandas as pd
 import pylatex as tex  # pyright: ignore [reportMissingTypeStubs]
 
 
+# TODO: Add option for standalone document class
 class DocumentManager:
     """
     Document Manager is a singleton class for storing information about current LaTeX document.
@@ -25,7 +22,7 @@ class DocumentManager:
         :return: Current document manager instance
         :rtype: DocumentManager
         """
-        if not cls._instance:
+        if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.__init__()
         return cls._instance
@@ -54,6 +51,12 @@ class DocumentManager:
             document_options=["12pt"],  # "border=12pt", "varwidth"
             indent=False,
         )
+
+    def append(self, content: Union[str, tex.base_classes.LatexObject]) -> None:
+        """
+        Append LaTeX content into the document.
+        """
+        self.document.append(content)  # pyright: ignore [reportUnknownMemberType]
 
     def finish(
         self,

@@ -1,40 +1,41 @@
-from numbers import Number
-from typing import (
-    Callable,
-    List,
-    Literal,
-    Optional,
-    TypeAlias,
-    Union,
-    cast,
-    Sequence,
+from numbers import Integral, Number
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
+
+from pylatex import Table, Section  # pyright: ignore [reportMissingTypeStubs]
+from pylatex.utils import (  # pyright: ignore [reportMissingTypeStubs]
+    NoEscape,
+    escape_latex,  # pyright: ignore [reportUnknownVariableType]
 )
-from functools import reduce
 
-import numpy as np
-import pylatex as tex  # pyright: ignore [reportMissingTypeStubs]
-
-from .dm import gdm, gd
-from .environments import *
-
-SimpleArray: TypeAlias = Sequence[Sequence[Union[str, int, float, Number]]]
-NDArrayAny: TypeAlias = "np.ndarray[Any, np.dtype[Any]]"
+from .dm import DocumentManager, gdm
+from .environments import (
+    AdjustBoxCommand,
+    CenteringFlagCommand,
+    Label2,
+    Parameters2,
+    SetLengthCommand,
+    Text,
+    tblr,
+)
+from .iter_protocols import (
+    DataFrameIterator,
+    DataFrameLike,
+    KnownLengthIterable,
+    KnownLengthIterable2D,
+    NDArrayLike,
+    OuterKnownLengthIterable,
+    Sequence2D,
+    dict2str,
+)
 
 
 def section(title: str, numbering: bool = False, label: Optional[str] = None) -> None:
     """
-    Inserts a section into the document.
-
-    :param title: Title text
-    :type title: str
-    :param numbering: True for numbering this section, defaults to False
-    :type numbering: bool, optional
-    :param label: Label for referencing, "label" or "prefix:label", defaults to None
-    :type label: Optional[str], optional
+    Insert a section into the document.
     """
     doc = gdm().document
     doc.append(  # pyright: ignore [reportUnknownMemberType]
-        tex.Section(
+        Section(
             title,
             numbering=numbering,
             label=label,  # pyright: ignore [reportGeneralTypeIssues]
@@ -42,90 +43,101 @@ def section(title: str, numbering: bool = False, label: Optional[str] = None) ->
     )
 
 
-def iterability_check(item: Any) -> bool:
-    return (
-        hasattr(item, "__iter__")
-        and hasattr(item, "__getitem__")
-        and hasattr(item, "__len__")
-    )
-
-
-def dict2str(data: Any | Dict[Any, Any], enclose: bool = False):
-    result: str = ""
-    if isinstance(data, dict):
-        parts: List[str] = []
-        for key, value in data.items():
-            if not isinstance(key, str) or len(key) == 0 or value is None:
-                continue
-            elif value == "":
-                if key[0] == "`":
-                    parts.append(key[1:])
-                else:
-                    parts.append(key)
-            else:
-                new_value: str = dict2str(value, True)
-                if new_value == "{}":
-                    continue
-                parts.append(f"{key}={new_value}")
-        result = ",".join(parts)
-    else:
-        result = str(data)
-    return f"{{{result}}}" if enclose else f"{result}"
-
-
 def table(
-    data: Union[SimpleArray, NDArrayAny],
+    data: Union[
+        Sequence2D,
+        KnownLengthIterable2D,
+        DataFrameIterator,
+        DataFrameLike,
+        NDArrayLike,
+    ],
     caption: Optional[str] = None,
     label: Optional[str] = None,
     center: bool = True,
-    number_format: str = "{:0.3f}",
+    float_format: str = "{:0.3f}",
     str_format: str = "{{{{{{{:s}}}}}}}",
     str_convertor: Callable[[Any], str] = str,
-    str_try_float: bool = True,
+    str_try_number: bool = True,
     line_style: Optional[Literal["border", "all", "header"]] = "all",
     header_dir: Optional[Literal["top", "left"]] = None,
     header_col_align: Optional[Literal["l", "c", "r", "j"]] = None,
     col_align: Literal["l", "c", "r", "j"] = "c",
     row_align: Literal["t", "m", "b", "h", "f"] = "m",
     position: str = "h!",
+    escape_cells: bool = True,
     escape_caption: bool = True,
     use_adjustbox: bool = True,
     use_siunitx: bool = True,
+    DF_column_names: bool = True,
+    DF_row_names: bool = True,
 ) -> None:
-    if isinstance(data, np.ndarray):
-        data = data.tolist()
-    if not iterability_check(data) or not reduce(
-        lambda acc, item: acc and iterability_check(item), data, True
-    ):
-        raise ValueError(
-            "Data are not iterable in two dimensions. "
-            "Both dimensions must implement __iter__, __getitem__ and __len__ functions."
+    """
+    Generate LaTeX table from input data. Table is created with tabularray package
+    with optional siunitx usage for decimal number alignment. Table can be automatically
+    scaled down with adjustbox package.
+    """
+    #
+    # Handle different types of input data
+    #
+    if isinstance(data, DataFrameIterator):
+        pass
+    elif "DataFrame" in str(type(data)) and isinstance(data, DataFrameLike):
+        data = DataFrameIterator(
+            data, include_column_names=DF_column_names, include_row_names=DF_row_names
         )
-    data = cast(SimpleArray, data)
-    max_column_count = max((len(row) for row in data))
+    elif "ndarray" in str(type(data)) and isinstance(data, NDArrayLike):
+        if data.ndim == 1:
+            raise ValueError("Input data must have at least two dimensions.")
+    elif isinstance(data, OuterKnownLengthIterable) and all(
+        [isinstance(x, KnownLengthIterable) for x in data]
+    ):
+        pass
+    else:
+        raise ValueError(
+            "Unknown input data type. "
+            "Supporting List[List[Any]], numpy.ndarray{ndim >= 2} and pandas.DataFrame."
+        )
+    data = cast(KnownLengthIterable2D, data)
 
-    latex_rows: str = ""
+    #
+    # Build the string representation of the table
+    #
+    latex_data: str = ""
+    max_column_count = max((len(row) for row in data))
     row_data: List[str] = [""] * max_column_count
     max_pre: List[int] = [0] * max_column_count
     max_post: List[int] = [0] * max_column_count
     for row in data:
         for i, item in enumerate(row):
-            if isinstance(item, Number):
-                row_data[i] = number_format.format(item)
+            if isinstance(item, bool):
+                row_data[i] = str_format.format(str(item))
+            elif isinstance(item, Integral):  # standard int + numpy.int
+                row_data[i] = str(item)
+            elif isinstance(item, Number):
+                row_data[i] = float_format.format(item)
             else:
                 item2: str = ""
+                converted: bool = False
                 if isinstance(item, str):
                     item2 = item
                 else:
                     item2 = str_convertor(item)
-                if str_try_float:
+                if str_try_number:
                     try:
-                        item2 = number_format.format(float(item2))
-                    except:
-                        item2 = str_format.format(item2)
+                        item2 = str(int(item2))
+                        converted = True
+                    except ValueError:
+                        try:
+                            item2 = float_format.format(float(item2))
+                            converted = True
+                        except ValueError:
+                            converted = False
+                if converted:
+                    row_data[i] = item2
                 else:
-                    item2 = str_format.format(item2)
-                row_data[i] = item2
+                    if escape_cells:
+                        item2 = escape_latex(item2)
+                    row_data[i] = str_format.format(item2)
 
             # Measuring width of the numbers for the siunitx package.
             # Doing it here so we don't skip numbers that where saved
@@ -143,8 +155,11 @@ def table(
                         max_post[i] = max(max_post[i], len(parts[1].split("e")[0]))
                 except:
                     pass
-        latex_rows += " & ".join(row_data) + r" \\" + "\n"
+        latex_data += " & ".join(row_data) + r" \\" + "\n"
 
+    #
+    # Columns and rows configuration (align)
+    #
     column_type: Dict[str, Any] = {
         "si": {"table-format": None, "table-number-alignment": None}
     }
@@ -164,6 +179,9 @@ def table(
         colspec[i] = f"Q[{dict2str(column_type)}]"
         print(colspec[i])
 
+    #
+    # Columns and rows configuration (rules/lines)
+    #
     if line_style == "border":
         colspec = ["|", "".join(colspec), "|"]
         rowspec = ["|", "".join(rowspec), "|"]
@@ -186,6 +204,9 @@ def table(
                 "".join(colspec[1:] if len(colspec) > 1 else []),
             ]
 
+    #
+    # Columns and rows configuration (header)
+    #
     additional_tblr_parameters = {}
     if header_dir == "top":
         if header_col_align is None:
@@ -204,7 +225,11 @@ def table(
                 {"font": r"\bfseries", "halign": header_col_align}
             )
 
-    table = tex.Table(position=position)
+    #
+    # LaTeX environments completion
+    #
+
+    table = Table(position=position)
     table.separate_paragraph = False  # Fix new lines before \begin{table}
 
     if center:
@@ -229,7 +254,7 @@ def table(
     tabular = tblr(
         "".join(colspec),
         "".join(rowspec),
-        data=tex.utils.NoEscape(latex_rows),
+        data=NoEscape(latex_data),
         arguments=additional_tblr_parameters,
     )
 
@@ -244,13 +269,11 @@ def table(
             Label2(label, "table")
         )
 
-    gdm().document.append(table)  # pyright: ignore [reportUnknownMemberType]
+    gdm().append(table)
 
 
 def text(content: str, escape: bool = True) -> None:
-    gd().append(  # pyright: ignore [reportUnknownMemberType]
-        Text(content=content, escape=escape)
-    )
+    gdm().append(Text(content=content, escape=escape))
 
 
 def finish(
@@ -290,3 +313,10 @@ def pdf(
     gdm().finish(
         filepath=filepath, generate_tex=False, compile_tex=True, compiler=compiler
     )
+
+
+def reset() -> None:
+    """
+    Reset the document. This will remove all the content which has been appended.
+    """
+    DocumentManager._instance = None  # pyright: ignore [reportPrivateUsage]
