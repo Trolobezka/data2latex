@@ -13,7 +13,11 @@ from typing import (
 )
 
 
-def dict2str(data: Any | Dict[Any, Any], enclose: bool = False):
+def dict2str(
+    data: Any | Dict[Any, Any],
+    enclose: bool = False,
+    level: int = 1,
+) -> str:
     result: str = ""
     if isinstance(data, dict):
         parts: List[str] = []
@@ -26,11 +30,14 @@ def dict2str(data: Any | Dict[Any, Any], enclose: bool = False):
                 else:
                     parts.append(key)
             else:
-                new_value: str = dict2str(value, True)
+                new_value: str = dict2str(value, enclose=True, level=level + 1)
                 if new_value == "{}":
                     continue
                 parts.append(f"{key}={new_value}")
-        result = ",".join(parts)
+        tabs = "\t" * level
+        result = f"%\n{tabs}" + (",%\n" + tabs).join(parts) + "%\n"
+        if enclose:
+            result += "\t" * max(level - 1, 0)
     else:
         result = str(data)
     return f"{{{result}}}" if enclose else f"{result}"
