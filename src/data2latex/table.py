@@ -1,7 +1,7 @@
 from numbers import Integral, Number
 from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast, Set
 
-from pylatex import Table  # pyright: ignore [reportMissingTypeStubs]
+from pylatex import Table, Package  # pyright: ignore [reportMissingTypeStubs]
 from pylatex.utils import (  # pyright: ignore [reportMissingTypeStubs]
     NoEscape,
     escape_latex,  # pyright: ignore [reportUnknownVariableType]
@@ -86,6 +86,7 @@ def decode_rule_style_code(code: str) -> Dict[Literal["v", "h"], Set[int]]:
     return {"v": v, "h": h}
 
 
+# TODO: Figure out a solution for nice formatting of column types in LaTeX output.
 def table(
     data: Union[
         Sequence2D,
@@ -96,10 +97,10 @@ def table(
     ],
     rules: str = "",
     caption: Optional[str] = None,
-    caption_pos: Literal["above", "bellow"] = "above",
+    caption_pos: Literal["above", "below"] = "above",
     escape_caption: bool = True,
     label: Optional[str] = None,
-    position: str = "h!",
+    position: str = "H",
     center: bool = True,
     float_format: str = "{:0.3f}",
     str_format: str = "{{{{{{{:s}}}}}}}",  # siunitx wants text enclosed in {{{...}}}
@@ -176,8 +177,8 @@ def table(
     :param caption: Caption text, defaults to ``None``.
     :type caption: Optional[str], optional
 
-    :param caption_pos: Position caption above or bellow the table, defaults to ``"above"``.
-    :type caption_pos: Literal["above", "bellow"], optional
+    :param caption_pos: Position caption above or below the table, defaults to ``"above"``.
+    :type caption_pos: Literal["above", "below"], optional
 
     :param escape_caption: ``True`` for escaping special LaTeX symbols in caption text, defaults to ``True``.
     :type escape_caption: bool, optional
@@ -402,6 +403,7 @@ def table(
     #
 
     table = Table(position=position)
+    table.packages.append(Package("float"))  # pyright: ignore [reportUnknownMemberType]
     table.separate_paragraph = False  # Fix new lines before \begin{table}
 
     if center:
@@ -437,7 +439,7 @@ def table(
     else:
         table.append(tabular)  # pyright: ignore [reportUnknownMemberType]
 
-    if caption is not None and caption_pos == "bellow":
+    if caption is not None and caption_pos == "below":
         if escape_caption:
             table.add_caption(caption)  # pyright: ignore [reportUnknownMemberType]
         else:
