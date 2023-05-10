@@ -4,6 +4,7 @@ import pylatex as tex  # pyright: ignore [reportMissingTypeStubs]
 
 
 # TODO: Add option for standalone document class
+# TODO: Add options for geometry package
 class DocumentManager:
     """
     Document Manager is a singleton class for storing information about current LaTeX document.
