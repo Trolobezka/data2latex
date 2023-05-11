@@ -629,24 +629,31 @@ def plot(
                 figure.add_caption(  # pyright: ignore [reportUnknownMemberType]
                     NoEscape(caption)
                 )
+
     axis = Axis(
         data=plots,
         options=NoEscape(dict2str(axis_options)),
     )
     axis.packages.append(Command("usetikzlibrary", "plotmarks"))
+
+    tikz_options: Dict[str, str] = {}
+    if not gdm().using_standalone:
+        tikz_options.update(
+            {
+                # These settings offset the figure body so that it can
+                # be centred relative to the text (e.g. caption).
+                # Cannot be used with standalone (one / multi) page mode
+                # because the side axis would not be taken into account
+                # when deciding standalone page size.
+                "trim axis left": "",
+                "trim axis right": "",
+            }
+        )
     tikz = TikZ(
         data=axis,
-        options=NoEscape(
-            dict2str(
-                {
-                    # These settings offset the figure body so that it can
-                    # be centred relative to the text (e.g. caption).
-                    "trim axis left": "",
-                    "trim axis right": "",
-                }
-            )
-        ),
+        options=NoEscape(dict2str(tikz_options)),
     )
+
     figure.append(tikz)  # pyright: ignore [reportUnknownMemberType]
 
     if caption is not None and caption_pos == "below":
