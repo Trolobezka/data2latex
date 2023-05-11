@@ -363,11 +363,13 @@ def table(
         colspec_header = colspec[0]
         colspec_body = colspec[1:]
     colspec = [
+        "%\n",
         "|" if Rule.BEFORE_HEADER in RULES[Rule.COL] else "",
         colspec_header,
         "|" if Rule.AFTER_HEADER in RULES[Rule.COL] else "",
         ("|" if Rule.INNER_BODY in RULES[Rule.COL] else "").join(colspec_body),
         "|" if Rule.AFTER_BODY in RULES[Rule.COL] and len(colspec_body) > 0 else "",
+        "%\n",
     ]
     rowspec_header: str = ""
     rowspec_body: List[str] = []
