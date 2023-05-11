@@ -6,6 +6,9 @@ import data2latex as dtol
 header = ["Cat", "Dog", "Rabbit"]
 animals = pd.DataFrame([[True, 0, 0], [0, "a", 0], [0, 0, 12.345]], header, header)
 
+# dtol.use_multi_page_standalone()
+# dtol.use_one_page_standalone()
+
 for rules in [
     "",
     "#",
@@ -23,7 +26,7 @@ for rules in [
         f"rules={rules}"
     )
     dtol.table(
-        animals,
+        animals,  # pyright: ignore [reportGeneralTypeIssues]
         rules=rules,
         caption=rf"\texttt{{{cap}}}",
         escape_caption=False,

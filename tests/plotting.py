@@ -22,6 +22,9 @@ Y = [
     for y, k in zip(np.random.uniform(0, 100, (n, N)), range(2, 2 + n))
 ]
 
+# dtol.use_multi_page_standalone()
+# dtol.use_one_page_standalone()
+
 dtol.plot(
     [X] * n,
     Y,
@@ -58,7 +61,7 @@ try:
 except:
     print("COMPILATION ERROR")
 
-plt.plot(  # pyright: ignore [reportUnknownMemberType]
-    np.array([X] * n).T, np.array(Y).T, "-"
-)
-plt.show()  # pyright: ignore [reportUnknownMemberType]
+# plt.plot(  # pyright: ignore [reportUnknownMemberType]
+#     np.array([X] * n).T, np.array(Y).T, "-"
+# )
+# plt.show()  # pyright: ignore [reportUnknownMemberType]

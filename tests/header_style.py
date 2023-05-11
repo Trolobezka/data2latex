@@ -8,6 +8,9 @@ import data2latex as dtol
 header = ["Cat", "Dog", "Rabbit"]
 animals = pd.DataFrame([["a" * 9, "b" * 9, "c" * 9]] * 3, header, header)
 
+# dtol.use_multi_page_standalone()
+# dtol.use_one_page_standalone()
+
 # for dir, bold, align in product(["top", "left"], [True, False], ["l", "c", "r"]):
 for top_bold, top_align, left_bold, left_align in product(
     [True, False], ["l", "c", "r"], [True, False], ["l", "c", "r"]
@@ -16,7 +19,7 @@ for top_bold, top_align, left_bold, left_align in product(
         f"{top_bold},{top_align},{left_bold},{left_align}"
     )
     dtol.table(
-        animals,
+        animals,  # pyright: ignore [reportGeneralTypeIssues]
         caption=rf"\texttt{{{cap}}}",
         escape_caption=False,
         str_try_number=False,

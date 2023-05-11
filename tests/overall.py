@@ -1,25 +1,10 @@
-from typing import (
-    Any,
-    Dict,
-    Generator,
-    Generic,
-    Iterator,
-    List,
-    Literal,
-    Optional,
-    Protocol,
-    Tuple,
-    TypeAlias,
-    TypeVar,
-    Union,
-    runtime_checkable,
-)
-
 import numpy as np
 import pandas as pd
-import pylatex as tex  # pyright: ignore [reportMissingTypeStubs]
 
 import data2latex as dtol
+
+# dtol.use_multi_page_standalone()
+# dtol.use_one_page_standalone()
 
 dtol.section("Testing Area")
 dtol.text(
@@ -39,8 +24,10 @@ dataframe = pd.DataFrame([[True, 0, 0], [0, "a", 0], [0, 0, 11.256]], header, he
 
 dtol.table(data, caption="Data from numpy.ndarray", rules="#", top_head_bold=True)
 
+# dtol.text(r"\vspace*{-20pt}", escape=False)
+
 dtol.table(
-    dataframe,
+    dataframe,  # pyright: ignore [reportGeneralTypeIssues]
     caption="Data from pandas.DataFrame",
     rules="|2_2",
     top_head_bold=True,
