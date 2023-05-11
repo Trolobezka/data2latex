@@ -10,7 +10,6 @@ from pylatex.base_classes import LatexObject  # pyright: ignore [reportMissingTy
 from pylatex.utils import NoEscape  # pyright: ignore [reportMissingTypeStubs]
 
 
-# TODO: Add options for geometry package
 class DocumentManager:
     """
     Document Manager is a singleton class for storing information about current LaTeX document.
@@ -61,7 +60,9 @@ class DocumentManager:
         spacing: Optional[Literal["1x", "1.5x", "2x"]] = "1.5x",  # setspace package
         par_indent: Optional[str] = "2em",  # parskip package
         par_skip: Optional[str] = "0.5em",  # indentfirst package
-        page_numbers: bool = False,
+        horizontal_margin: Optional[str] = "2cm",  # geometry package
+        vertical_margin: Optional[str] = "2cm",  # geometry package
+        page_numbers: bool = False,  # lastpage package
         additional_packages: List[LatexObject | str] = [],
     ) -> None:
         self.document_class = document_class
@@ -70,16 +71,28 @@ class DocumentManager:
         self.spacing = spacing
         self.par_indent = par_indent
         self.par_skip = par_skip
+        self.horizontal_margin = horizontal_margin
+        self.vertical_margin = vertical_margin
         self.page_numbers = page_numbers
         self.packages = additional_packages
 
         self.using_standalone: bool = False
         self.using_standalone_multi: bool = False
 
+        geometry_options: Optional[List[str]] = []
+        if horizontal_margin is not None:
+            geometry_options.append(f"hmargin={horizontal_margin}")
+        if vertical_margin is not None:
+            geometry_options.append(f"vmargin={vertical_margin}")
+        # We cannot use geometry when using standalone document class
+        if len(geometry_options) == 0 or document_class == "standalone":
+            geometry_options = None
+
         self.document = Document(
             documentclass=self.document_class,
             document_options=[font_size, *document_class_options],
             page_numbers=page_numbers,
+            geometry_options=geometry_options,
         )
         document_packages: Set[LatexObject | str] = cast(
             Set[Any],

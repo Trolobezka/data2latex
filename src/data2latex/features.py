@@ -2,6 +2,7 @@ from typing import List, Literal, Optional
 
 from pylatex import Section  # pyright: ignore [reportMissingTypeStubs]
 from pylatex.utils import NoEscape  # pyright: ignore [reportMissingTypeStubs]
+from pylatex.base_classes import LatexObject  # pyright: ignore [reportMissingTypeStubs]
 
 from .dm import DocumentManager, gdm
 from .environments import Text
@@ -25,6 +26,40 @@ def text(content: str, escape: bool = True) -> None:
     Add paragraph of solid text.
     """
     gdm().append(Text(content=content, escape=escape))
+
+
+# This should offer some of the options as DocumentManager.__init__().
+# Instead of copying all of the possible inputs, we could just put *args
+# and **kwargs and transfer them into the __init__() through gdm().
+# I like this more because it is more expressive and works well with type hinting.
+def setup(
+    document_class: str = "article",
+    document_class_options: List[str] = [],
+    font_size: Literal["10pt", "11pt", "12pt"] = "12pt",
+    spacing: Optional[Literal["1x", "1.5x", "2x"]] = "1.5x",
+    par_indent: Optional[str] = "2em",
+    par_skip: Optional[str] = "0.5em",
+    horizontal_margin: Optional[str] = "2cm",
+    vertical_margin: Optional[str] = "2cm",
+    page_numbers: bool = False,
+    additional_packages: List[LatexObject | str] = [],
+) -> None:
+    if DocumentManager._instance is not None:  # pyright: ignore [reportPrivateUsage]
+        raise RuntimeError(
+            "Cannot call this setup function if document manager was already used."
+        )
+    DocumentManager.gdm(
+        document_class=document_class,
+        document_class_options=document_class_options,
+        font_size=font_size,
+        spacing=spacing,
+        par_indent=par_indent,
+        par_skip=par_skip,
+        horizontal_margin=horizontal_margin,
+        vertical_margin=vertical_margin,
+        page_numbers=page_numbers,
+        additional_packages=additional_packages,
+    )
 
 
 def use_one_page_standalone(
