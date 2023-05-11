@@ -158,6 +158,7 @@ legend_dir_to_pos: Dict[str, str] = {
     "down right": "south east",
 }
 
+# Stephen Few - Show Me the Numbers
 default_colors: List[Color] = [
     (93, 165, 218),
     (250, 164, 58),
@@ -247,13 +248,37 @@ def rgb2mixcolor(color: Union[Tuple[int, int, int], Tuple[float, float, float]])
     return f"rgb,255:red,{r};green,{g};blue,{b}"
 
 
+# https://stackoverflow.com/a/214657/9318084
+def hex2rgb(value: str) -> Tuple[int, int, int]:
+    value = value.lstrip("#")
+    _len = len(value)
+    if _len != 6:
+        raise ValueError(
+            f"Expected color in hex format with 6 characters, input: '{value}'."
+        )
+    return tuple(int(value[i : i + 2], 16) for i in [0, 2, 4])
+
+
 def handle_color(color: Union[None, Color, List[Union[None, Color]]]) -> List[str]:
     if not isinstance(color, list):
         color = [color]
-    return [
-        rgb2mixcolor(c) if isinstance(c, tuple) else "none" if c is None else c
-        for c in color
-    ]
+    valid_colors: List[Any] = [None] * len(color)
+    for i, c in enumerate(color):
+        if c is None:
+            valid_colors[i] = "none"
+        elif isinstance(c, tuple):
+            valid_colors[i] = rgb2mixcolor(c)
+        elif isinstance(c, str):  # pyright: ignore [reportUnnecessaryIsInstance]
+            if (
+                c
+                in NamedColor.__args__  # pyright: ignore [reportUnknownMemberType, reportGeneralTypeIssues]
+            ):
+                valid_colors[i] = c
+            else:
+                valid_colors[i] = rgb2mixcolor(hex2rgb(c))
+        else:
+            valid_colors[i] = str(c)
+    return valid_colors
 
 
 def decode_grid_style_code(code: str) -> Dict[str, Optional[str]]:
@@ -330,8 +355,8 @@ def plot(
     width: Optional[str] = None,
     height: Optional[str] = None,
     equal_axis: bool = False,
-    xlimits: Optional[Union[Tuple[float, float], Literal["exact"]]] = None,
-    ylimits: Optional[Union[Tuple[float, float], Literal["exact"]]] = None,
+    xlimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal["exact"]]] = None,
+    ylimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal["exact"]]] = None,
     precision: Union[int, Tuple[int, int]] = (2, 2),
     zerofill: Union[bool, Tuple[bool, bool]] = (False, False),
     label: Optional[str] = None,
@@ -341,11 +366,11 @@ def plot(
     center: bool = True,
     line: Union[None, LineStyle, List[Union[None, LineStyle]]] = None,
     line_width: Union[str, List[str]] = "0.75pt",
-    line_color: Union[None, Color, List[Union[None, Color]]] = default_colors,
+    line_color: Union[None, Color, List[Union[None, Color]]] = ["blue", "red", "black"],
     line_opacity: Union[float, List[float]] = 1.0,
     mark: Union[None, MarkStyle, List[Union[None, MarkStyle]]] = "*",
     mark_size: Union[str, List[str]] = "2pt",
-    mark_fill_color: Union[None, Color, List[Union[None, Color]]] = default_colors,
+    mark_fill_color: Union[None, Color, List[Union[None, Color]]] = ["blue", "red", "black"],
     mark_stroke_color: Union[None, Color, List[Union[None, Color]]] = None,
     mark_fill_opacity: Union[float, List[float]] = 1.0,
     mark_stroke_opacity: Union[float, List[float]] = 0.0,
