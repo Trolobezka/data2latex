@@ -51,7 +51,6 @@ dtol.table(
 )
 
 try:
-    dtol.pdf("overall")
+    dtol.finish("overall")
 except:
     print("COMPILATION ERROR")
-dtol.latex()

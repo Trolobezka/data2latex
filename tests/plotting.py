@@ -54,10 +54,9 @@ dtol.plot(
     ylimits=(0, None),
 )
 try:
-    dtol.pdf("plotting")
+    dtol.finish("plotting")
 except:
     print("COMPILATION ERROR")
-dtol.latex()
 
 plt.plot(  # pyright: ignore [reportUnknownMemberType]
     np.array([X] * n).T, np.array(Y).T, "-"
