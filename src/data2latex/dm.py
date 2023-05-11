@@ -58,8 +58,8 @@ class DocumentManager:
         # Default allowed sizes for article, report and book
         font_size: Literal["10pt", "11pt", "12pt"] = "12pt",
         spacing: Optional[Literal["1x", "1.5x", "2x"]] = "1.5x",  # setspace package
-        par_indent: Optional[str] = "2em",  # parskip package
-        par_skip: Optional[str] = "0.5em",  # indentfirst package
+        par_indent: Optional[str] = "2em",  # indentfirst package
+        par_skip: Optional[str] = "0.5em",  # parskip package
         horizontal_margin: Optional[str] = "2cm",  # geometry package
         vertical_margin: Optional[str] = "2cm",  # geometry package
         page_numbers: bool = False,  # lastpage package
@@ -179,7 +179,7 @@ class DocumentManager:
         filepath: str = "document",
         generate_tex: bool = True,
         compile_tex: bool = True,
-        compiler: Optional[Literal["pdflatex"]] = "pdflatex",
+        compiler: Optional[Literal["pdflatex", "latexmk"]] = "pdflatex",
     ) -> None:
         """
         Compile the document.
