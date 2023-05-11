@@ -166,7 +166,12 @@ default_colors: List[Color] = [
     (241, 124, 176),
 ]
 
-AxisMode: TypeAlias = Literal["linear", "log"]
+AxisMode: TypeAlias = Literal["lin", "log"]
+
+axis_mode_short_to_long: Dict[str, str] = {
+    "lin": "linear",
+    "log": "log",
+}
 
 #
 # Helper functions
@@ -348,15 +353,19 @@ def plot(
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: Optional[str] = None,
-    mode: Union[AxisMode, Tuple[AxisMode, AxisMode]] = ("linear", "linear"),
+    mode: Union[AxisMode, Tuple[AxisMode, AxisMode]] = ("lin", "lin"),
     legend: Union[None, str, List[Union[None, str]]] = None,
     legend_pos: LegendPosition = "top right",
     legend_entry_align: Literal["l", "c", "r"] = "c",
     width: Optional[str] = None,
     height: Optional[str] = None,
     equal_axis: bool = False,
-    xlimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal["exact"]]] = None,
-    ylimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal["exact"]]] = None,
+    xlimits: Optional[
+        Union[Tuple[Optional[float], Optional[float]], Literal["exact"]]
+    ] = None,
+    ylimits: Optional[
+        Union[Tuple[Optional[float], Optional[float]], Literal["exact"]]
+    ] = None,
     precision: Union[int, Tuple[int, int]] = (2, 2),
     zerofill: Union[bool, Tuple[bool, bool]] = (False, False),
     label: Optional[str] = None,
@@ -370,7 +379,11 @@ def plot(
     line_opacity: Union[float, List[float]] = 1.0,
     mark: Union[None, MarkStyle, List[Union[None, MarkStyle]]] = "*",
     mark_size: Union[str, List[str]] = "2pt",
-    mark_fill_color: Union[None, Color, List[Union[None, Color]]] = ["blue", "red", "black"],
+    mark_fill_color: Union[None, Color, List[Union[None, Color]]] = [
+        "blue",
+        "red",
+        "black",
+    ],
     mark_stroke_color: Union[None, Color, List[Union[None, Color]]] = None,
     mark_fill_opacity: Union[float, List[float]] = 1.0,
     mark_stroke_opacity: Union[float, List[float]] = 0.0,
@@ -507,8 +520,8 @@ def plot(
         "xmax": None if xlimits is None else xlimits[1],
         "ymin": None if ylimits is None else ylimits[0],
         "ymax": None if ylimits is None else ylimits[1],
-        "xmode": mode[0],
-        "ymode": mode[1],
+        "xmode": axis_mode_short_to_long.get(mode[0], mode[0]),
+        "ymode": axis_mode_short_to_long.get(mode[1], mode[1]),
         "scaled ticks": "false",
         "axis equal": str(equal_axis).lower(),
         # "max space between x ticks": "60pt",
@@ -559,7 +572,7 @@ def plot(
         )
         universal_log_settings = True
     for i, axis in [(0, "x"), (1, "y")]:
-        if mode[i] == "linear":
+        if mode[i] == "lin":
             axis_options[f"{axis}ticklabel style"] = pgf_fixed_number_format(
                 precision[i], zerofill[i]
             )
