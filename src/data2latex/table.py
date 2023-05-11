@@ -255,7 +255,12 @@ def table(
         if data.ndim <= 1:
             raise ValueError("Input data must have at least two dimensions.")
     elif isinstance(data, OuterKnownLengthIterable) and all(
-        [isinstance(x, KnownLengthIterable) for x in data]
+        [
+            isinstance(
+                x, KnownLengthIterable
+            )  # pyright: ignore [reportUnnecessaryIsInstance]
+            for x in data
+        ]
     ):
         pass
     else:

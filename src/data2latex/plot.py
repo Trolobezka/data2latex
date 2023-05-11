@@ -579,7 +579,7 @@ def plot(
 
     if caption is not None:
         figure.append(  # pyright: ignore [reportUnknownMemberType]
-            SetLengthCommand("abovecaptionskip", "5pt plus 2pt minus 2pt")
+            SetLengthCommand("abovecaptionskip", "1pt plus 1pt minus 1pt")
         )
         figure.append(  # pyright: ignore [reportUnknownMemberType]
             SetLengthCommand("belowcaptionskip", "5pt plus 2pt minus 2pt")
@@ -596,7 +596,19 @@ def plot(
         options=NoEscape(dict2str(axis_options)),
     )
     axis.packages.append(Command("usetikzlibrary", "plotmarks"))
-    tikz = TikZ(data=axis)
+    tikz = TikZ(
+        data=axis,
+        options=NoEscape(
+            dict2str(
+                {
+                    # These settings offset the figure body so that it can
+                    # be centred relative to the text (e.g. caption).
+                    "trim axis left": "",
+                    "trim axis right": "",
+                }
+            )
+        ),
+    )
     figure.append(tikz)  # pyright: ignore [reportUnknownMemberType]
 
     if caption is not None and caption_pos == "below":
@@ -609,7 +621,7 @@ def plot(
 
     if label is not None:
         figure.append(  # pyright: ignore [reportUnknownMemberType]
-            Label2(label, "table")
+            Label2(label, "plot")
         )
 
     gdm().append(figure)
