@@ -5,6 +5,7 @@ from .features import (
     pdf,
     reset,
     section,
+    setup,
     text,
     use_multi_page_standalone,
     use_one_page_standalone,

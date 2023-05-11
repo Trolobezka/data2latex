@@ -21,6 +21,13 @@ if __name__ == "__main__":
         "tests/**/*.synctex.gz",
         "tests/**/*.tex",
         "tests/**/*.pdf",
+        "examples/**/*.aux",
+        "examples/**/*.fdb_latexmk",
+        "examples/**/*.fls",
+        "examples/**/*.log",
+        "examples/**/*.synctex.gz",
+        "examples/**/*.tex",
+        "examples/**/*.pdf",
     ]
     root = Path(".")
 
