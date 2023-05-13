@@ -86,7 +86,6 @@ def decode_rule_style_code(code: str) -> Dict[Literal["v", "h"], Set[int]]:
     return {"v": v, "h": h}
 
 
-# TODO: Figure out a solution for nice formatting of column types in LaTeX output.
 def table(
     data: Union[
         Sequence2D,
