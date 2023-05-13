@@ -406,6 +406,8 @@ def plot(
         line = "-"              # Every plot will have solid line;
         mark = ["*", None]      # 1st, 3rd, 5th... plot will have marks; 2nd, 4th, 6th... plot will have no mark;
 
+    Inputing empty data in valid format should run and compile without an error. For plotting data from ``pandas.DataFrame``: convert the dataframe into ``numpy.array`` and extract the column names for the plot legend. 
+
     :param _X: X coordinates for plotting. Does not have a type hint because the data validity is checked before plotting. Should be ``List[Number]``, ``List[List[Number]]`` or ``numpy.ndarray`` with one or two dimensions.
     :type _X: Any
 

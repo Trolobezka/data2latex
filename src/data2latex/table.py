@@ -118,7 +118,7 @@ def table(
     dataframe_row_names: bool = True,
 ) -> None:
     """
-    Generate LaTeX table from input data. The table is created with ``tabularray`` package (``tblr`` environment) with optional ``siunitx`` usage for decimal number alignment. Table can be automatically scaled down with ``adjustbox`` package.
+    Generate LaTeX table from input data. The table is created with ``tabularray`` package (``tblr`` environment) with optional ``siunitx`` usage for decimal number alignment. Table can be automatically scaled down with ``adjustbox`` package. Inputing empty data in valid format should run and compile without an error.
 
     **Examples of usage**
 
@@ -134,6 +134,7 @@ def table(
     .. code-block:: python
 
         import data2latex as dtol
+        import pandas as pd
         data = pd.DataFrame(
             [["purple", "cyan"], ["blue", "yellow"]],
             ["C1", "C2"], ["R1", "R2"]
@@ -253,13 +254,17 @@ def table(
     elif "ndarray" in str(type(data)) and isinstance(data, NDArrayLike):
         if data.ndim <= 1:
             raise ValueError("Input data must have at least two dimensions.")
-    elif isinstance(data, OuterKnownLengthIterable) and all(
-        [
-            isinstance(
-                x, KnownLengthIterable
-            )  # pyright: ignore [reportUnnecessaryIsInstance]
-            for x in data
-        ]
+    elif (
+        isinstance(data, OuterKnownLengthIterable)
+        and all(
+            [
+                isinstance(
+                    x, KnownLengthIterable
+                )  # pyright: ignore [reportUnnecessaryIsInstance]
+                for x in data
+            ]
+        )
+        and len(data) > 0
     ):
         pass
     else:
