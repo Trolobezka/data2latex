@@ -26,6 +26,17 @@ em.sig-param > span.n:first-child > span.pre:first-child {
     color: darkblue;
 }
 
+/* Better table for csv values */
+table.csv-table.docutils > colgroup > col {
+    width: 100px !important;
+}
+table.csv-table.docutils > thead > tr {
+    text-align: center;
+}
+table.csv-table.docutils > tbody {
+    text-align: center;
+}
+
 /* This will put function arguments on new lines */
 /* https://github.com/sphinx-doc/sphinx/issues/1514#issuecomment-742703082 */
 

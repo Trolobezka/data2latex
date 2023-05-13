@@ -408,6 +408,26 @@ def plot(
 
     Inputing empty data in valid format should run and compile without an error. For plotting data from ``pandas.DataFrame``: convert the dataframe into ``numpy.array`` and extract the column names for the plot legend. 
 
+    **Examples of usage**
+
+    .. highlight:: python
+    .. code-block:: python
+
+        import data2latex as dtol
+        X = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        Y = [84, 13, 94, 37, 80, 89, 90, 45, 55, 26, 92]
+        dtol.plot(X, Y, line="-", mark="*")
+        dtol.finish()
+
+    .. highlight:: python
+    .. code-block:: python
+
+        import data2latex as dtol
+        import numpy as np
+        data = np.random.normal(0, 100, (2, 100))
+        dtol.plot(data[0], data[1], grid="#", line=None, mark="*")
+        dtol.finish()
+
     :param _X: X coordinates for plotting. Does not have a type hint because the data validity is checked before plotting. Should be ``List[Number]``, ``List[List[Number]]`` or ``numpy.ndarray`` with one or two dimensions.
     :type _X: Any
 
