@@ -37,6 +37,8 @@ def text(content: str, escape: bool = True) -> None:
     :param escape: ``True`` for replacing special LaTeX characters, defaults to ``True``.
     :type escape: bool, optional
     """
+    if escape:
+        content = content.replace("_", r"\_")
     gdm().append(Text(content=content, escape=escape))
 
 
