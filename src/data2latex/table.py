@@ -118,7 +118,7 @@ def table(
     dataframe_row_names: bool = True,
 ) -> None:
     """
-    Generate LaTeX table from input data. Table is created with ``tabularray`` package (``tblr`` environment) with optional ``siunitx`` usage for decimal number alignment. Table can be automatically scaled down with ``adjustbox`` package.
+    Generate LaTeX table from input data. The table is created with ``tabularray`` package (``tblr`` environment) with optional ``siunitx`` usage for decimal number alignment. Table can be automatically scaled down with ``adjustbox`` package.
 
     **Examples of usage**
 
@@ -185,7 +185,7 @@ def table(
     :param label: Label for later referencing, use format ``"prefix:label"`` or just ``"label"`` with automatic prefix ``"table"``, defaults to ``None``.
     :type label: Optional[str], optional
 
-    :param position: Float position on the page for ``table`` environment, defaults to ``"h!"``.
+    :param position: Float position on the page for ``table`` environment, defaults to ``"H"``.
     :type position: str, optional
 
     :param center: ``True`` for centering the table on the page, defaults to ``True``.

@@ -388,6 +388,120 @@ def plot(
     mark_fill_opacity: Union[float, List[float]] = 1.0,
     mark_stroke_opacity: Union[float, List[float]] = 0.0,
 ) -> None:
+    """
+    Generate LaTeX scatter or line plot from input data. The plot is created with ``pgfplots`` package (``tikzpicture`` + ``axis`` environment). Data can be in the form of a list or an array of numbers for single single line. For plotting more data sets, input data should be in the form of list of lists as shown below:
+
+    .. highlight:: python
+    .. code-block:: python
+
+        X = [[dataset1_x], [dataset2_x]]
+        Y = [[dataset1_y], [dataset2_y]]
+        legend = ["dataset1", "dataset2"]
+
+    Some input parameters can take single value or list of values. If list is given, the plot generator will cycle through the values as shown below:
+
+    .. highlight:: python
+    .. code-block:: python
+
+        line = "-"              # Every plot will have solid line;
+        mark = ["*", None]      # 1st, 3rd, 5th... plot will have marks; 2nd, 4th, 6th... plot will have no mark;
+
+    :param _X: X coordinates for plotting. Does not have a type hint because the data validity is checked before plotting. Should be ``List[Number]``, ``List[List[Number]]`` or ``numpy.ndarray`` with one or two dimensions.
+    :type _X: Any
+
+    :param _Y: Y coordinates for plotting. Does not have a type hint because the data validity is checked before plotting. Should be ``List[Number]``, ``List[List[Number]]`` or ``numpy.ndarray`` with one or two dimensions.
+    :type _Y: Any
+
+    :param caption: Caption text, defaults to ``None``.
+    :type caption: Optional[str], optional
+
+    :param xlabel: Label for x axis, defaults to ``None``.
+    :type xlabel: Optional[str], optional
+
+    :param ylabel: Label for y axis, defaults to ``None``.
+    :type ylabel: Optional[str], optional
+
+    :param grid: Custom code for configuring major/minor grid, defaults to ``None``. Symbol ``|`` turns on major vertical grid lines, symbol ``_`` turns on major horizontal grid lines, ``#`` symbols turns both directions of major grid lines. If the symbol is followed up by a number, the number is interpreted as number of minor grid lines inbetween the major grid lines in given direction. The symbols can be combined to obtain desired grid settings. Does not work well with logaritmic axis!
+    :type grid: Optional[str], optional
+
+    :param mode: Axis scale: the first tuple element for x axis, the second one for y axis. If single value is given, it will be used for both axis. Defaults to ``("lin", "lin")``.
+    :type mode: Union[AxisMode, Tuple[AxisMode, AxisMode]], optional
+
+    :param legend: Legend entries: input ``None`` if dataset should not have an entry. Defaults to ``None``.
+    :type legend: Union[None, str, List[Union[None, str]]], optional
+
+    :param legend_pos: Legend position: available string literals start with vertical position (e.g. top) followed by horizontal position (e.g. right). Defaults to "top right".
+    :type legend_pos: LegendPosition, optional
+
+    :param legend_entry_align: Horizontal text alignment of legend entries, defaults to ``"c"``.
+    :type legend_entry_align: Literal[``l``, ``c``, ``r``], optional
+
+    :param width: Width of the plot with unit, defaults to ``None``.
+    :type width: Optional[str], optional
+
+    :param height: Height of the plot with unit, defaults to ``None``.
+    :type height: Optional[str], optional
+
+    :param equal_axis: ``True`` for equal scale on both axis. You must find a good working combo with settings ``equal_axis``, ``x/ylimits`` and ``width/height``. Defaults to ``False``.
+    :type equal_axis: bool, optional
+
+    :param xlimits: Limits for x axis: either two numbers (min, max) in tuple or ``"exact"`` literal for setting the limits to minimum and maximum of the datasets. Defaults to ``None``.
+    :type xlimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal[``exact``]]], optional
+
+    :param ylimits: Limits for y axis: either two numbers (min, max) in tuple or ``"exact"`` literal for setting the limits to minimum and maximum of the datasets. Defaults to ``None``.
+    :type ylimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal[``exact``]]], optional
+
+    :param precision: Precision of the displayed tick labels in the form of (x axis tick labels, y axis tick labels). Defaults to (2, 2).
+    :type precision: Union[int, Tuple[int, int]], optional
+
+    :param zerofill: ``True`` for padding decimal numbers (tick labels) with zeros to satisfy given precision, defaults to ``(False, False)``.
+    :type zerofill: Union[bool, Tuple[bool, bool]], optional
+
+    :param label: Label for later referencing, use format ``"prefix:label"`` or just ``"label"`` with automatic prefix ``"table"``, defaults to ``None``.
+    :type label: Optional[str], optional
+
+    :param caption_pos: Position caption above or below the table, defaults to ``"below"``.
+    :type caption_pos: Literal[``above``, ``below``], optional
+
+    :param escape_caption: ``True`` for escaping special LaTeX symbols in caption text, defaults to ``True``.
+    :type escape_caption: bool, optional
+
+    :param position: Float position on the page for ``table`` environment, defaults to ``"H"``.
+    :type position: str, optional
+
+    :param center: ``True`` for centering the table on the page, defaults to ``True``.
+    :type center: bool, optional
+
+    :param line: Line style: ``None`` for no line or some string valid literal, defaults to ``None``.
+    :type line: Union[None, LineStyle, List[Union[None, LineStyle]]], optional
+
+    :param line_width: Line width with unit, defaults to ``"0.75pt"``.
+    :type line_width: Union[str, List[str]], optional
+
+    :param line_color: Line color in the form of tuple with three int (0-255) or float (0.0-1.0) values, a named color or a string with hex value. Defaults to ``["blue", "red", "black"]``.
+    :type line_color: Union[None, Color, List[Union[None, Color]]], optional
+
+    :param line_opacity: Line color opacity (0.0-1.0), defaults to ``1.0``.
+    :type line_opacity: Union[float, List[float]], optional
+
+    :param mark: Mark style, can be ``None`` for no marks. Defaults to ``"*"``.
+    :type mark: Union[None, MarkStyle, List[Union[None, MarkStyle]]], optional
+
+    :param mark_size: Mark size with unit, defaults to ``"2pt"``.
+    :type mark_size: Union[str, List[str]], optional
+
+    :param mark_fill_color: Mark fill (area) color in the form of tuple with three int (0-255) or float (0.0-1.0) values, a named color or a string with hex value. Can be ``None`` for no fill. Defaults to ``["blue", "red", "black"]``.
+    :type mark_fill_color: Union[None, Color, List[Union[None, Color]]], optional
+
+    :param mark_stroke_color: Mark stroke (outline) color in the form of tuple with three int (0-255) or float (0.0-1.0) values, a named color or a string with hex value. Can be ``None`` for no stroke. Defaults to ``None``.
+    :type mark_stroke_color: Union[None, Color, List[Union[None, Color]]], optional
+
+    :param mark_fill_opacity: Mark fill opacity (0.0-1.0), defaults to ``1.0``.
+    :type mark_fill_opacity: Union[float, List[float]], optional
+
+    :param mark_stroke_opacity: Mark stroke opacity (0.0-1.0), defaults to ``0.0``.
+    :type mark_stroke_opacity: Union[float, List[float]], optional
+    """
     X, x_lengths = process_data(_X, "X")
     Y, y_lengths = process_data(_Y, "Y")
     check_data_lengths(x_lengths, y_lengths)

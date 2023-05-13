@@ -11,7 +11,7 @@ Welcome to Data2LaTeX's documentation!
    :align: center
    :scale: 80 %
 
-.. _PyLaTeX: https://jeltef.github.io/PyLaTeX/current/index.html
+.. _PyLaTeX: https://github.com/JelteF/PyLaTeX
 .. _GitHub: https://github.com/Trolobezka/data2latex
 
 .. toctree::
