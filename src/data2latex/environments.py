@@ -14,7 +14,10 @@ from pylatex.base_classes import (  # pyright: ignore [reportMissingTypeStubs]
 from pylatex.base_classes.command import (  # pyright: ignore [reportMissingTypeStubs]
     Parameters,
 )
-from pylatex.utils import NoEscape  # pyright: ignore [reportMissingTypeStubs]
+from pylatex.utils import (
+    NoEscape,
+    escape_latex,
+)  # pyright: ignore [reportMissingTypeStubs]
 
 
 class CommandEnvironment(Container):
@@ -231,5 +234,8 @@ class Text(LatexObject):
         if isinstance(self.content, LatexObject):
             string = self.content.dumps()  # pyright: ignore [reportGeneralTypeIssues]
         else:
-            string = self.content
+            if self.escape:
+                string = escape_latex(self.content)
+            else:
+                string = self.content
         return string
