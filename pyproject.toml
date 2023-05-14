@@ -38,9 +38,9 @@ dev = [
 ]
 
 [project.urls]
-homepage = "https://github.com/Trolobezka/data2latex"
-documentation = "https://github.com/Trolobezka/data2latex"
-repository = "https://github.com/Trolobezka/data2latex"
+"Homepage" = "https://github.com/Trolobezka/data2latex"
+"Repository" = "https://github.com/Trolobezka/data2latex"
+"Documentation" = "https://trolobezka.github.io/data2latex-docs"
 "Bug Tracker" = "https://github.com/Trolobezka/data2latex/issues"
 
 [build-system]

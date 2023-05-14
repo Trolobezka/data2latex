@@ -17,7 +17,7 @@ Examples with results can be found in the [documentation](https://trolobezka.git
 ```python
 import data2latex as dtol
 dtol.section("Data2LaTeX")
-dtol.text("This project is part of my bachelor thesis which deals with data representation using Python and LaTeX")
+dtol.text("This project is part of my bachelor thesis which deals with data representation using Python and LaTeX.")
 dtol.finish("simple_features")
 ```
 
@@ -33,7 +33,7 @@ dtol.finish("simple_table")
 ### Simple plot
 
 ```python
-port data2latex as dtol
+import data2latex as dtol
 X = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 Y = [84, 13, 94, 37, 80, 89, 90, 45, 55, 26, 92]
 dtol.plot(X, Y, line="-", mark="*")
