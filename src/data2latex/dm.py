@@ -126,6 +126,12 @@ class DocumentManager:
                 )
             )
 
+        document_packages.add(
+            UnsafeCommand(
+                "newcommand", r"\DataToLaTeX", None, extra_arguments=r"$\Delta$\texttt{ata2}\LaTeX{}"
+            )
+        )
+
         for p in self.packages:
             document_packages.add(p)
 
