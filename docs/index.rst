@@ -35,7 +35,7 @@ Data2LaTeX offers two basic features: sections and plain text. If you need other
 
    import data2latex as dtol
    dtol.section("Data2LaTeX")
-   dtol.text("This project is part of my bachelor thesis which deals with data representation using Python and LaTeX")
+   dtol.text("This project is part of my bachelor thesis which deals with data representation using Python and LaTeX.")
    dtol.finish("simple_features")
 
 .. image:: /_static/img/simple_features.pdf.png
@@ -149,7 +149,6 @@ Multiple scatter plots
 
    import data2latex as dtol
    import numpy as np
-   dtol.use_one_page_standalone()
    X = [np.random.normal(loc, scale, 100) for loc, scale in [(50, 20), (50, 40), (100, 10)]]
    Y = [np.random.normal(loc, scale, 100) for loc, scale in [(50, 20), (100, 40), (75, 10)]]
    dtol.plot(
@@ -170,7 +169,6 @@ Multiple line plots
 
    import data2latex as dtol
    import numpy as np
-   dtol.use_one_page_standalone()
    X = np.linspace(0, 100, 30)
    Y = np.cumsum(np.random.normal(10, 10, (3, 30)), axis=1)
    dtol.plot(
@@ -238,7 +236,6 @@ Because ``pandas.DataFrame`` is currently not supported as valid input data type
    from io import StringIO
    import data2latex as dtol
    import pandas as pd
-   dtol.use_one_page_standalone()
    data = pd.read_csv(StringIO("""\
    x,A,B
    0,0.0367,0.3447
