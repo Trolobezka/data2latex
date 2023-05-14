@@ -389,7 +389,7 @@ def plot(
     mark_stroke_opacity: Union[float, List[float]] = 0.0,
 ) -> None:
     """
-    Generate LaTeX scatter or line plot from input data. The plot is created with ``pgfplots`` package (``tikzpicture`` + ``axis`` environment). Data can be in the form of a list or an array of numbers for single single line. For plotting more data sets, input data should be in the form of list of lists as shown below:
+    Generate LaTeX scatter or line plot from input data. The plot is created with ``pgfplots`` package (``tikzpicture`` + ``axis`` environment). Data can be in the form of a list or an array of numbers for single line. For plotting more data sets, input data should be in the form of list of lists as shown below:
 
     .. highlight:: python
     .. code-block:: python
