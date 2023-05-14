@@ -13,6 +13,15 @@ from typing import (
 )
 
 
+def replace_multiple(
+    source: str, to_be_replaced: List[str], replace_with: str = ""
+) -> str:
+    result: str = source
+    for substring in to_be_replaced:
+        result = result.replace(substring, replace_with)
+    return result
+
+
 def dict2str(
     data: Any | Dict[Any, Any],
     enclose: bool = False,
@@ -31,7 +40,7 @@ def dict2str(
                     parts.append(key)
             else:
                 new_value: str = dict2str(value, enclose=True, level=level + 1)
-                if new_value == "{}":
+                if replace_multiple(new_value, ["\t", "\n", " ", "%"]) == "{}":
                     continue
                 parts.append(f"{key}={new_value}")
         tabs = "\t" * level
