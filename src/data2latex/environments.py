@@ -1,10 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 
-from pylatex import (  # pyright: ignore [reportMissingTypeStubs]
-    Label,
-    Marker,
-    Package,
-)
+from pylatex import Label, Marker, Package  # pyright: ignore [reportMissingTypeStubs]
 from pylatex.base_classes import (  # pyright: ignore [reportMissingTypeStubs]
     Command,
     Container,
@@ -14,10 +10,10 @@ from pylatex.base_classes import (  # pyright: ignore [reportMissingTypeStubs]
 from pylatex.base_classes.command import (  # pyright: ignore [reportMissingTypeStubs]
     Parameters,
 )
-from pylatex.utils import (
+from pylatex.utils import (  # pyright: ignore [reportMissingTypeStubs]
+    escape_latex,  # pyright: ignore [reportUnknownVariableType]
     NoEscape,
-    escape_latex,
-)  # pyright: ignore [reportMissingTypeStubs]
+)
 
 
 class CommandEnvironment(Container):
@@ -226,15 +222,15 @@ class Text(LatexObject):
 
     def __init__(self, content: Union[str, LatexObject], escape: bool = True):
         super().__init__()
-        self.content = content
-        self.escape = escape
+        self.content: Union[str, LatexObject] = content
+        self._escape: bool = escape
 
     def dumps(self) -> str:  # pyright: ignore [reportIncompatibleMethodOverride]
         string: str = ""
         if isinstance(self.content, LatexObject):
             string = self.content.dumps()  # pyright: ignore [reportGeneralTypeIssues]
         else:
-            if self.escape:
+            if self._escape:
                 string = escape_latex(self.content)
             else:
                 string = self.content
