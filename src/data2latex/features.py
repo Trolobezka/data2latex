@@ -32,7 +32,7 @@ def text(content: str, escape: bool = True) -> None:
     """
     Add a paragraph of solid text.
 
-    :param content: Content fo the paragraph.
+    :param content: Content for the paragraph.
     :type content: str
     :param escape: ``True`` for replacing special LaTeX characters, defaults to ``True``.
     :type escape: bool, optional
