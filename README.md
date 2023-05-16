@@ -4,9 +4,9 @@
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-This project is part of my bachelor thesis which deals with data representation using **Python** and **LaTeX**. You can find the source code on my [GitHub](https://github.com/Trolobezka/data2latex).
+This project is a part of my bachelor thesis which deals with data representation using **Python** and **LaTeX**. You can find the source code on my [GitHub](https://github.com/Trolobezka/data2latex).
 
-The idea behind this package prototype is that generating LaTeX documents containing scientific data from Python should not be difficult and require many steps. Currently the package supports the creation of simple tables and two types of plots: scatter plots and line plots. The package uses the [PyLaTeX](https://github.com/JelteF/PyLaTeX) package to handle the document creation and compilation process. The main data sources are arrays and data tables from the popular `numpy` and `pandas` packages. A major inspiration for the module syntax is the `matplotlib.pyplot` module, which allows plots to be created in a few lines of code. The tables are created using `tblr` environment from `tabularray` package. The plots are created using `tikzpicture` / `axis` environment from `tikz` / `pgfplots` package.
+The idea behind this package prototype is that generating LaTeX documents containing scientific data from Python should not be difficult and require many steps. Currently the package supports the creation of simple tables and two types of plots: scatter plots and line plots. The package uses the [PyLaTeX](https://github.com/JelteF/PyLaTeX) package to handle the document creation and compilation process. The main data sources are arrays and data tables from the popular packages `numpy` and `pandas`. A major inspiration for the module syntax is the `matplotlib.pyplot` module, which allows plots to be created in a few lines of code. The tables are created using the `tblr` environment from the `tabularray` package. The plots are created using the `tikzpicture` / `axis` environment from the `tikz` / `pgfplots` package.
 
 ## Examples
 

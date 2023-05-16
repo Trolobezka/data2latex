@@ -18,9 +18,9 @@ Welcome to Data2LaTeX's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-This project is part of my bachelor thesis which deals with data representation using **Python** and **LaTeX**. You can find the source code on my GitHub_.
+This project is a part of my bachelor thesis which deals with data representation using **Python** and **LaTeX**. You can find the source code on my GitHub_.
 
-The idea behind this package prototype is that generating LaTeX documents containing scientific data from Python should not be difficult and require many steps. Currently the package supports the creation of simple tables and two types of plots: scatter plots and line plots. The package uses the PyLaTeX_ package to handle the document creation and compilation process. The main data sources are arrays and data tables from the popular ``numpy`` and ``pandas`` packages. A major inspiration for the module syntax is the ``matplotlib.pyplot`` module, which allows plots to be created in a few lines of code. The tables are created using ``tblr`` environment from ``tabularray`` package. The plots are created using ``tikzpicture`` / ``axis`` environment from ``tikz`` / ``pgfplots`` package.
+The idea behind this package prototype is that generating LaTeX documents containing scientific data from Python should not be difficult and require many steps. Currently the package supports the creation of simple tables and two types of plots: scatter plots and line plots. The package uses the PyLaTeX_ package to handle the document creation and compilation process. The main data sources are arrays and data tables from the popular packages ``numpy`` and ``pandas``. A major inspiration for the module syntax is the ``matplotlib.pyplot`` module, which allows plots to be created in a few lines of code. The tables are created using the ``tblr`` environment from the ``tabularray`` package. The plots are created using the ``tikzpicture`` / ``axis`` environment from the ``tikz`` / ``pgfplots`` package.
 
 Examples
 ========
@@ -28,7 +28,7 @@ Examples
 Simple features
 ---------------
 
-Data2LaTeX offers two basic features: sections and plain text. If you need other features and environment, you can use PyLaTeX to create the features and insert them into the document object manually.
+Data2LaTeX offers two basic features: sections and plain text. If you need other features or environments, you can use PyLaTeX to create the features and insert them into the document object manually.
 
 .. highlight:: python
 .. code-block:: python
