@@ -452,7 +452,7 @@ def plot(
     :param legend: Legend entries: input ``None`` if dataset should not have an entry. Defaults to ``None``.
     :type legend: Union[None, str, List[Union[None, str]]], optional
 
-    :param legend_pos: Legend position: available string literals start with vertical position (e.g. top) followed by horizontal position (e.g. right). Defaults to "top right".
+    :param legend_pos: Legend position: available string literals start with vertical position (e.g. top) followed by horizontal position (e.g. right). Defaults to ``"top right"``.
     :type legend_pos: LegendPosition, optional
 
     :param legend_entry_align: Horizontal text alignment of legend entries, defaults to ``"c"``.
@@ -473,13 +473,13 @@ def plot(
     :param ylimits: Limits for y axis: either two numbers (min, max) in tuple or ``"exact"`` literal for setting the limits to minimum and maximum of the datasets. Defaults to ``None``.
     :type ylimits: Optional[Union[Tuple[Optional[float], Optional[float]], Literal[``exact``]]], optional
 
-    :param precision: Precision of the displayed tick labels in the form of (x axis tick labels, y axis tick labels). Defaults to (2, 2).
+    :param precision: Precision of the displayed tick labels in the form of (x axis tick labels, y axis tick labels). Defaults to ``(2, 2)``.
     :type precision: Union[int, Tuple[int, int]], optional
 
     :param zerofill: ``True`` for padding decimal numbers (tick labels) with zeros to satisfy given precision, defaults to ``(False, False)``.
     :type zerofill: Union[bool, Tuple[bool, bool]], optional
 
-    :param label: Label for later referencing, use format ``"prefix:label"`` or just ``"label"`` with automatic prefix ``"table"``, defaults to ``None``.
+    :param label: Label for later referencing, use format ``"prefix:label"`` or just ``"label"`` with automatic prefix ``"plot"``, defaults to ``None``.
     :type label: Optional[str], optional
 
     :param caption_pos: Position caption above or below the table, defaults to ``"below"``.
